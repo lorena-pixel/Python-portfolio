@@ -1,0 +1,5 @@
+gTTS==2.5.4
+newspaper3k==0.2.8
+nltk==3.9.4
+lxml==6.1.1
+lxml_html_clean==0.4.5
