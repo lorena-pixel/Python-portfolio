@@ -1,0 +1,18 @@
+# Archivos compilados de Python
+__pycache__/
+*.py[cod]
+
+# Entornos virtuales
+.venv/
+venv/
+env/
+
+# Configuración de VS Code
+.vscode/
+
+# Archivos generados
+*.mp3
+
+# Archivos del sistema
+.DS_Store
+Thumbs.db
