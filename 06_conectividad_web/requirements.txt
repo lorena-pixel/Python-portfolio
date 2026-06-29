@@ -1,0 +1,2 @@
+# Este proyecto utiliza únicamente módulos incluidos en Python.
+# No es necesario instalar dependencias externas.
