@@ -1,6 +1,45 @@
 import tkinter as tk
 from tkinter import messagebox
+import random
+from copy import deepcopy
 from solver import resolver, es_valido
+
+
+SUDOKUS = [
+    [
+        [5, 3, 0, 0, 7, 0, 0, 0, 0],
+        [6, 0, 0, 1, 9, 5, 0, 0, 0],
+        [0, 9, 8, 0, 0, 0, 0, 6, 0],
+        [8, 0, 0, 0, 6, 0, 0, 0, 3],
+        [4, 0, 0, 8, 0, 3, 0, 0, 1],
+        [7, 0, 0, 0, 2, 0, 0, 0, 6],
+        [0, 6, 0, 0, 0, 0, 2, 8, 0],
+        [0, 0, 0, 4, 1, 9, 0, 0, 5],
+        [0, 0, 0, 0, 8, 0, 0, 7, 9],
+    ],
+    [
+        [0, 0, 0, 2, 6, 0, 7, 0, 1],
+        [6, 8, 0, 0, 7, 0, 0, 9, 0],
+        [1, 9, 0, 0, 0, 4, 5, 0, 0],
+        [8, 2, 0, 1, 0, 0, 0, 4, 0],
+        [0, 0, 4, 6, 0, 2, 9, 0, 0],
+        [0, 5, 0, 0, 0, 3, 0, 2, 8],
+        [0, 0, 9, 3, 0, 0, 0, 7, 4],
+        [0, 4, 0, 0, 5, 0, 0, 3, 6],
+        [7, 0, 3, 0, 1, 8, 0, 0, 0],
+    ],
+    [
+        [0, 2, 0, 6, 0, 8, 0, 0, 0],
+        [5, 8, 0, 0, 0, 9, 7, 0, 0],
+        [0, 0, 0, 0, 4, 0, 0, 0, 0],
+        [3, 7, 0, 0, 0, 0, 5, 0, 0],
+        [6, 0, 0, 0, 0, 0, 0, 0, 4],
+        [0, 0, 8, 0, 0, 0, 0, 1, 3],
+        [0, 0, 0, 0, 2, 0, 0, 0, 0],
+        [0, 0, 9, 8, 0, 0, 0, 3, 6],
+        [0, 0, 0, 3, 0, 6, 0, 9, 0],
+    ],
+]
 
 
 class SudokuGUI:
@@ -8,9 +47,11 @@ class SudokuGUI:
         self.ventana = ventana
         self.ventana.title("Resolutor de Sudoku")
         self.entradas = []
+        self.tablero_inicial = []
 
         self.crear_tablero()
         self.crear_botones()
+        self.nuevo_sudoku()
 
     def crear_tablero(self):
         marco = tk.Frame(self.ventana)
@@ -29,8 +70,8 @@ class SudokuGUI:
                 entrada.grid(
                     row=fila,
                     column=columna,
-                    padx=(3 if columna % 3 == 0 else 1),
-                    pady=(3 if fila % 3 == 0 else 1)
+                    padx=(4 if columna % 3 == 0 else 1),
+                    pady=(4 if fila % 3 == 0 else 1)
                 )
                 fila_entradas.append(entrada)
 
@@ -42,7 +83,25 @@ class SudokuGUI:
 
         tk.Button(marco_botones, text="Resolver", command=self.resolver_sudoku).grid(row=0, column=0, padx=5)
         tk.Button(marco_botones, text="Comprobar", command=self.comprobar_sudoku).grid(row=0, column=1, padx=5)
-        tk.Button(marco_botones, text="Limpiar", command=self.limpiar).grid(row=0, column=2, padx=5)
+        tk.Button(marco_botones, text="Nuevo Sudoku", command=self.nuevo_sudoku).grid(row=0, column=2, padx=5)
+        tk.Button(marco_botones, text="Limpiar", command=self.limpiar_respuestas).grid(row=0, column=3, padx=5)
+
+    def nuevo_sudoku(self):
+        self.tablero_inicial = deepcopy(random.choice(SUDOKUS))
+
+        for fila in range(9):
+            for columna in range(9):
+                entrada = self.entradas[fila][columna]
+                entrada.config(state="normal")
+                entrada.delete(0, tk.END)
+
+                valor = self.tablero_inicial[fila][columna]
+
+                if valor != 0:
+                    entrada.insert(0, str(valor))
+                    entrada.config(state="disabled", disabledforeground="black", disabledbackground="#e6e6e6")
+                else:
+                    entrada.config(bg="white")
 
     def obtener_tablero(self):
         tablero = []
@@ -68,9 +127,15 @@ class SudokuGUI:
     def mostrar_tablero(self, tablero):
         for fila in range(9):
             for columna in range(9):
-                self.entradas[fila][columna].delete(0, tk.END)
-                self.entradas[fila][columna].insert(0, str(tablero[fila][columna]))
-                self.entradas[fila][columna].config(bg="white")
+                entrada = self.entradas[fila][columna]
+                entrada.config(state="normal")
+                entrada.delete(0, tk.END)
+                entrada.insert(0, str(tablero[fila][columna]))
+
+                if self.tablero_inicial[fila][columna] != 0:
+                    entrada.config(state="disabled", disabledforeground="black", disabledbackground="#e6e6e6")
+                else:
+                    entrada.config(bg="#d7f7d7")
 
     def resolver_sudoku(self):
         tablero = self.obtener_tablero()
@@ -78,8 +143,10 @@ class SudokuGUI:
         if tablero is None:
             return
 
-        if resolver(tablero):
-            self.mostrar_tablero(tablero)
+        solucion = deepcopy(tablero)
+
+        if resolver(solucion):
+            self.mostrar_tablero(solucion)
             messagebox.showinfo("Sudoku", "Sudoku resuelto correctamente.")
         else:
             messagebox.showerror("Sudoku", "No se encontró solución.")
@@ -94,9 +161,12 @@ class SudokuGUI:
 
         for fila in range(9):
             for columna in range(9):
-                valor = tablero[fila][columna]
                 entrada = self.entradas[fila][columna]
 
+                if self.tablero_inicial[fila][columna] != 0:
+                    continue
+
+                valor = tablero[fila][columna]
                 entrada.config(bg="white")
 
                 if valor != 0:
@@ -115,11 +185,13 @@ class SudokuGUI:
         else:
             messagebox.showinfo("Comprobación", "Los números introducidos son válidos.")
 
-    def limpiar(self):
+    def limpiar_respuestas(self):
         for fila in range(9):
             for columna in range(9):
-                self.entradas[fila][columna].delete(0, tk.END)
-                self.entradas[fila][columna].config(bg="white")
+                if self.tablero_inicial[fila][columna] == 0:
+                    entrada = self.entradas[fila][columna]
+                    entrada.delete(0, tk.END)
+                    entrada.config(bg="white")
 
 
 if __name__ == "__main__":
