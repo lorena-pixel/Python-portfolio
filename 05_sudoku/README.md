@@ -2,25 +2,43 @@
 
 ## Descripción
 
-Programa en Python que resuelve automáticamente un Sudoku utilizando el algoritmo de backtracking.
+Aplicación desarrollada en Python capaz de resolver automáticamente un Sudoku utilizando el algoritmo de backtracking.
+
+El proyecto incluye una versión en consola y está preparado para evolucionar hacia una interfaz gráfica.
 
 ## Características
 
-- Tablero de Sudoku 9x9.
-- Detección de casillas vacías.
-- Validación por fila, columna y bloque 3x3.
-- Resolución automática mediante retroceso.
-- Visualización del Sudoku original y resuelto en consola.
+- Resolver Sudokus automáticamente.
+- Algoritmo Backtracking.
+- Validación de filas, columnas y bloques 3x3.
+- Código organizado en varios archivos.
 
 ## Tecnologías utilizadas
 
 - Python 3
+- Tkinter (para futuras versiones)
 
-## Ejecución
+## Estructura
 
-```bash
-python main.py
 ```
+05_sudoku/
+│
+├── main.py
+├── solver.py
+├── gui.py
+├── README.md
+└── requirements.txt
+```
+
+## Próximas versiones
+
+- Interfaz gráfica.
+- Introducción manual de números.
+- Comprobación de errores.
+- Generador de Sudokus.
+- Diferentes niveles de dificultad.
+- Cronómetro.
+- Sistema de pistas.
 
 ## Versión
 
